@@ -5,14 +5,26 @@ include '../dbh.php';
 $uid = $_POST['uid'];
 $pwd = $_POST['pwd'];
 
-$sql = "SELECT * FROM kayttaja WHERE uid='$uid' AND pwd='$pwd'";
-
+$sql = "SELECT * FROM kayttaja WHERE uid = '$uid'";
 $result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+$hash_pwd = $row['pwd'];
+$hash = password_verify($pwd, $hash_pwd);
 
-if (!$row = mysqli_fetch_assoc($result)){
-	echo "Väärä käyttäjänimi tai salasana!";
+if($hash == 0) {
+		header("Location: ../index.php?error=empty");
+		exit();
 } else {
-	$_SESSION['id'] = $row['user_id'];
+	
+	$sql = "SELECT * FROM kayttaja WHERE uid='$uid' AND pwd='$hash_pwd'";
+
+	$result = mysqli_query($conn, $sql);
+
+	if (!$row = mysqli_fetch_assoc($result)){
+		echo "Väärä käyttäjänimi tai salasana!";
+	} else {
+		$_SESSION['id'] = $row['user_id'];
+	}
+	header("Location: ../index.php");
 }
-header("Location: ../index.php");
 ?>

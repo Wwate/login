@@ -34,7 +34,9 @@ if ($uidcheck > 0) {
 	header("Location: ../signup.php?error=username");
 	exit();
 } else {
-		$sql = "INSERT INTO kayttaja(first, last, uid, pwd) VALUES ('$first', '$last', '$uid', '$pwd')";
+	$encrypted_pwd = password_hash($pwd, PASSWORD_DEFAULT);
+		$sql = "INSERT INTO kayttaja(first, last, uid, pwd) 
+		VALUES ('$first', '$last', '$uid', '$encrypted_pwd')";
 		$result = mysqli_query($conn, $sql);
 
 		header("Location: ../index.php");
